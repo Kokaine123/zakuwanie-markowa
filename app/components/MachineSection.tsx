@@ -1,6 +1,6 @@
 import ScrollReveal from "./ScrollReveal";
 import { hm200EcolineImage } from "../data/hm200Ecoline";
-import { machineGalleryImages, machineSpecs, machineUses } from "../data/machineContent";
+import { machineDetailImage, machineSpecs, machineUses } from "../data/machineContent";
 
 type MachinePictureProps = {
   desktop: string;
@@ -97,9 +97,9 @@ export default function MachineSection() {
 
           <figure className="machine__figure machine__figure--uses">
             <MachinePicture
-              desktop={machineGalleryImages.detail.desktop}
-              mobile={machineGalleryImages.detail.mobile}
-              alt={machineGalleryImages.detail.alt}
+              desktop={machineDetailImage.desktop}
+              mobile={machineDetailImage.mobile}
+              alt={machineDetailImage.alt}
               imgClassName="machine__img machine__img--uses"
             />
           </figure>

@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import type { DivIcon, LatLngExpression } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { siteAddressFull } from "../data/siteContent";
 
 const MapLoadingFallback = () => (
   <div className="map-section__frame map-section__placeholder" role="status">
@@ -109,7 +111,7 @@ export default function ServiceAreaMap() {
       zoom={8}
       scrollWheelZoom={false}
       className="map-section__frame"
-      aria-label="Mapa dojazdu do Zakuwanie Markowa, Markowa 946"
+      aria-label={`Mapa dojazdu do Zakuwanie Markowa, ${siteAddressFull}`}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

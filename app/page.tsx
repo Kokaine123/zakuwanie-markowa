@@ -6,7 +6,16 @@ import ServiceAreaMap from "./components/ServiceAreaMap";
 import GalleryCoverflow from "./components/GalleryCoverflow";
 import HeroRightSlideshow from "./components/HeroRightSlideshow";
 import MachineSection from "./components/MachineSection";
+import BenefitsSection from "./components/BenefitsSection";
+import FaqSection from "./components/FaqSection";
+import ZakuwanieMarkowaLogo from "./components/ZakuwanieMarkowaLogo";
 import { ecolinoXWodwormTraki } from "./data/ecolinoXWodwormTraki";
+import {
+  heroContent,
+  siteAddressFull,
+  sitePhoneDisplay,
+  sitePhoneHref,
+} from "./data/siteContent";
 
 const heroRightSlideshowImages = ecolinoXWodwormTraki.filter(
   (image) => image.id !== "wezel-hydrauliczny-maszyna-01",
@@ -16,6 +25,7 @@ const navigationItems = [
   { label: "Start", href: "#start" },
   { label: "O maszynie", href: "#oferta" },
   { label: "Galeria", href: "#galeria" },
+  { label: "FAQ", href: "#faq" },
   { label: "Kontakt", href: "#kontakt" },
   { label: "Mapa", href: "#mapa" },
 ];
@@ -51,50 +61,76 @@ const additionalOffers = [
   },
 ];
 
-const titleTransitionDuration = 220;
+const logoCenterHoldDuration = 380;
+const logoMoveDuration = 360;
 const sectionActivationPoint = 0.35;
 type NavigationToggleTone = "light" | "dark";
 
-const whiteBackgroundNavigationHrefs = new Set(["#oferta", "#galeria", "#kontakt", "#mapa"]);
+const whiteBackgroundNavigationHrefs = new Set([
+  "#oferta",
+  "#galeria",
+  "#faq",
+  "#kontakt",
+  "#mapa",
+]);
 
 export default function HomePage() {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [isTitleExpanded, setIsTitleExpanded] = useState(false);
-  const [isHeaderTitleHidden, setIsHeaderTitleHidden] = useState(false);
+  const [isNavigationItemsVisible, setIsNavigationItemsVisible] = useState(false);
+  const [isNavigationClosing, setIsNavigationClosing] = useState(false);
   const [activeNavigationHref, setActiveNavigationHref] = useState(navigationItems[0].href);
   const [navigationToggleTone, setNavigationToggleTone] =
     useState<NavigationToggleTone>("light");
-  const [desktopNavigationTone, setDesktopNavigationTone] =
-    useState<NavigationToggleTone>("light");
+  const [isDesktopNavigationHidden, setIsDesktopNavigationHidden] = useState(false);
   const navigationToggleRef = useRef<HTMLButtonElement | null>(null);
-  const desktopNavigationRef = useRef<HTMLElement | null>(null);
-  const navigationTimerRef = useRef<number | null>(null);
+  const navigationTimersRef = useRef<number[]>([]);
 
-  const clearNavigationTimer = () => {
-    if (navigationTimerRef.current === null) {
-      return;
-    }
+  const clearNavigationTimers = () => {
+    navigationTimersRef.current.forEach((timerId) => {
+      window.clearTimeout(timerId);
+    });
+    navigationTimersRef.current = [];
+  };
 
-    window.clearTimeout(navigationTimerRef.current);
-    navigationTimerRef.current = null;
+  const scheduleNavigationTimer = (callback: () => void, delay: number) => {
+    const timerId = window.setTimeout(callback, delay);
+    navigationTimersRef.current.push(timerId);
   };
 
   const openNavigation = () => {
-    clearNavigationTimer();
+    clearNavigationTimers();
+    setIsNavigationClosing(false);
+    setIsNavigationItemsVisible(false);
+    setIsTitleExpanded(false);
     setIsNavigationOpen(true);
-    navigationTimerRef.current = window.setTimeout(() => {
+
+    scheduleNavigationTimer(() => {
       setIsTitleExpanded(true);
-      navigationTimerRef.current = null;
-    }, titleTransitionDuration);
+    }, logoCenterHoldDuration);
+
+    scheduleNavigationTimer(() => {
+      setIsNavigationItemsVisible(true);
+    }, logoCenterHoldDuration + logoMoveDuration);
   };
 
   const closeNavigation = () => {
-    clearNavigationTimer();
-    setIsTitleExpanded(false);
-    navigationTimerRef.current = window.setTimeout(() => {
+    clearNavigationTimers();
+    setIsNavigationItemsVisible(false);
+    setIsNavigationClosing(false);
+
+    scheduleNavigationTimer(() => {
+      setIsTitleExpanded(false);
+    }, 120);
+
+    scheduleNavigationTimer(() => {
+      setIsNavigationClosing(true);
+    }, 120 + logoMoveDuration);
+
+    scheduleNavigationTimer(() => {
+      setIsNavigationClosing(false);
       setIsNavigationOpen(false);
-      navigationTimerRef.current = null;
-    }, titleTransitionDuration);
+    }, 120 + logoMoveDuration * 2);
   };
 
   const toggleNavigation = () => {
@@ -106,17 +142,73 @@ export default function HomePage() {
     openNavigation();
   };
 
-  useEffect(() => clearNavigationTimer, []);
+  useEffect(() => clearNavigationTimers, []);
 
   useEffect(() => {
-    document.body.classList.toggle("nav-open", isNavigationOpen);
-    document.documentElement.classList.toggle("nav-open", isNavigationOpen);
+    const root = document.documentElement;
+    const { body } = document;
+
+    body.classList.toggle("nav-open", isNavigationOpen);
+    root.classList.toggle("nav-open", isNavigationOpen);
+    root.classList.toggle("nav-title-expanded", isTitleExpanded);
+    root.classList.toggle("nav-items-visible", isNavigationItemsVisible);
+    root.classList.toggle("nav-closing", isNavigationClosing);
+
+    const preventBackgroundScroll = (event: Event) => {
+      event.preventDefault();
+    };
+
+    if (isNavigationOpen) {
+      const scrollY = window.scrollY;
+      body.dataset.navScrollLock = String(scrollY);
+      body.style.position = "fixed";
+      body.style.top = `-${scrollY}px`;
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.width = "100%";
+
+      body.addEventListener("touchmove", preventBackgroundScroll, { passive: false });
+      body.addEventListener("wheel", preventBackgroundScroll, { passive: false });
+    } else {
+      const scrollY = Number(body.dataset.navScrollLock || "0");
+
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      delete body.dataset.navScrollLock;
+
+      if (scrollY > 0) {
+        window.scrollTo(0, scrollY);
+      }
+    }
 
     return () => {
-      document.body.classList.remove("nav-open");
-      document.documentElement.classList.remove("nav-open");
+      body.removeEventListener("touchmove", preventBackgroundScroll);
+      body.removeEventListener("wheel", preventBackgroundScroll);
+
+      body.classList.remove("nav-open");
+      root.classList.remove(
+        "nav-open",
+        "nav-title-expanded",
+        "nav-items-visible",
+        "nav-closing",
+      );
+
+      const scrollY = Number(body.dataset.navScrollLock || "0");
+
+      if (body.style.position === "fixed") {
+        body.style.position = "";
+        body.style.top = "";
+        body.style.left = "";
+        body.style.right = "";
+        body.style.width = "";
+        delete body.dataset.navScrollLock;
+        window.scrollTo(0, scrollY);
+      }
     };
-  }, [isNavigationOpen]);
+  }, [isNavigationOpen, isTitleExpanded, isNavigationItemsVisible, isNavigationClosing]);
 
   useEffect(() => {
     const sections = navigationItems
@@ -128,6 +220,7 @@ export default function HomePage() {
     }
 
     let animationFrameId: number | null = null;
+    let lastScrollY = window.scrollY;
 
     const parseRgbColor = (color: string) => {
       if (color === "transparent") {
@@ -211,18 +304,6 @@ export default function HomePage() {
       return whiteBackgroundNavigationHrefs.has(currentHref) ? "dark" : "light";
     };
 
-    const getDesktopNavigationTone = (currentHref: string): NavigationToggleTone => {
-      const measuredTone = getToneBelowElement(desktopNavigationRef.current, [
-        ".desktop-navigation",
-      ]);
-
-      if (measuredTone) {
-        return measuredTone;
-      }
-
-      return whiteBackgroundNavigationHrefs.has(currentHref) ? "dark" : "light";
-    };
-
     const getCurrentSection = () => {
       if (window.scrollY <= 8) {
         return sections[0];
@@ -266,9 +347,17 @@ export default function HomePage() {
       setActiveNavigationHref((previousHref) =>
         previousHref === currentHref ? previousHref : currentHref,
       );
-      setIsHeaderTitleHidden(currentScrollY > 8 || currentHref !== navigationItems[0].href);
       setNavigationToggleTone(getNavigationToggleTone(currentHref));
-      setDesktopNavigationTone(getDesktopNavigationTone(currentHref));
+
+      if (currentScrollY <= 16) {
+        setIsDesktopNavigationHidden(false);
+      } else if (currentScrollY > lastScrollY + 6) {
+        setIsDesktopNavigationHidden(true);
+      } else if (currentScrollY < lastScrollY - 6) {
+        setIsDesktopNavigationHidden(false);
+      }
+
+      lastScrollY = currentScrollY;
       animationFrameId = null;
     };
 
@@ -296,45 +385,38 @@ export default function HomePage() {
 
   return (
     <>
-      <nav
-        ref={desktopNavigationRef}
-        className="desktop-navigation"
-        data-tone={desktopNavigationTone}
-        aria-label="Menu główne"
+      <div
+        className="desktop-navigation-wrap"
+        data-hidden={isDesktopNavigationHidden ? "true" : undefined}
       >
-        <ul className="desktop-navigation__list">
-          {navigationItems.map((item) => {
-            const isActive = item.href === activeNavigationHref;
+        <nav className="desktop-navigation" aria-label="Menu główne">
+          <ul className="desktop-navigation__list">
+            {navigationItems.map((item) => {
+              const isActive = item.href === activeNavigationHref;
 
-            return (
-              <li key={item.href}>
-                <a
-                  className={`desktop-navigation__link${
-                    isActive ? " desktop-navigation__link--active" : ""
-                  }`}
-                  href={item.href}
-                  aria-current={isActive ? "location" : undefined}
-                  data-active={isActive ? "true" : undefined}
-                  onClick={() => setActiveNavigationHref(item.href)}
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+              return (
+                <li key={item.href}>
+                  <a
+                    className="desktop-navigation__link"
+                    href={item.href}
+                    aria-current={isActive ? "location" : undefined}
+                    onClick={() => setActiveNavigationHref(item.href)}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
 
       <main>
       <header
         className="site-header"
-        data-open={isNavigationOpen}
-        data-title-expanded={isTitleExpanded}
-        data-title-hidden={isHeaderTitleHidden && !isNavigationOpen}
         data-toggle-tone={navigationToggleTone}
         aria-label="Nagłówek strony"
       >
-        <span className="site-header__title">ZAKUWANIE MARKOWA</span>
         <button
           ref={navigationToggleRef}
           className="navigation-toggle"
@@ -355,41 +437,47 @@ export default function HomePage() {
       <nav
         id="mobile-navigation"
         className="mobile-navigation"
-        data-open={isNavigationOpen}
         aria-hidden={!isNavigationOpen}
         aria-label="Menu główne"
       >
-        <ul className="mobile-navigation__list">
-          {navigationItems.map((item) => {
-            const isActive = item.href === activeNavigationHref;
+        <div className="mobile-navigation__content">
+          <a
+            href="#start"
+            className="mobile-navigation__logo-link"
+            tabIndex={isNavigationOpen ? 0 : -1}
+            onClick={closeNavigation}
+          >
+            <ZakuwanieMarkowaLogo variant="light" className="mobile-navigation__logo" />
+          </a>
+          <ul className="mobile-navigation__list">
+            {navigationItems.map((item) => {
+              const isActive = item.href === activeNavigationHref;
 
-            return (
-              <li key={item.href}>
-                <a
-                  className={`mobile-navigation__link${
-                    isActive ? " mobile-navigation__link--active" : ""
-                  }`}
-                  href={item.href}
-                  aria-current={isActive ? "location" : undefined}
-                  data-active={isActive ? "true" : undefined}
-                  tabIndex={isNavigationOpen ? 0 : -1}
-                  onClick={() => {
-                    setActiveNavigationHref(item.href);
-                    closeNavigation();
-                  }}
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li key={item.href}>
+                  <a
+                    className="mobile-navigation__link"
+                    href={item.href}
+                    aria-current={isActive ? "location" : undefined}
+                    tabIndex={isNavigationOpen && isNavigationItemsVisible ? 0 : -1}
+                    onClick={() => {
+                      setActiveNavigationHref(item.href);
+                      closeNavigation();
+                    }}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
         <a
           className="mobile-navigation__phone"
-          href="tel:+48696129310"
-          tabIndex={isNavigationOpen ? 0 : -1}
+          href={sitePhoneHref}
+          tabIndex={isNavigationOpen && isNavigationItemsVisible ? 0 : -1}
         >
-          696 129 310
+          {sitePhoneDisplay}
         </a>
       </nav>
 
@@ -398,11 +486,11 @@ export default function HomePage() {
           <picture>
             <source
               media="(min-width: 48rem)"
-              srcSet="/gallery/ecolinoXWodwormTraki/wezel-hydrauliczny-maszyna-01.webp"
+              srcSet={heroContent.desktopImage}
             />
             <img
-              src="/gallery/ecolinoXWodwormTraki/wezel-hydrauliczny-maszyna-01-mobile.webp"
-              alt=""
+              src={heroContent.mobileImage}
+              alt="Wąż hydrauliczny z zakutą końcówką"
               loading="eager"
               fetchPriority="high"
             />
@@ -431,11 +519,12 @@ export default function HomePage() {
         </div>
 
         <ScrollReveal className="hero__content">
-          <p className="hero__eyebrow">Ulica Markowa 946</p>
-          <h1 className="hero__heading">Zakuwanie węży Hydraulicznych Łańcut</h1>
+          <ZakuwanieMarkowaLogo variant="light" className="hero__logo" />
+          <h1 className="hero__heading">{heroContent.title}</h1>
+          <p className="hero__location">{heroContent.location}</p>
           <div className="hero__actions" aria-label="Kontakt">
-            <a className="hero__cta hero__cta--primary" href="tel:+48696129310">
-              Zadzwoń: 696 129 310
+            <a className="hero__cta hero__cta--primary hero__cta--phone" href={sitePhoneHref}>
+              {sitePhoneDisplay}
             </a>
             <a className="hero__cta hero__cta--secondary" href="#kontakt">
               Formularz kontaktowy
@@ -443,6 +532,8 @@ export default function HomePage() {
           </div>
         </ScrollReveal>
       </section>
+
+      <BenefitsSection />
 
       <MachineSection />
 
@@ -472,12 +563,14 @@ export default function HomePage() {
           </div>
           <div className="phone-banner__contact">
             <span className="phone-banner__prompt">Zadzwoń</span>
-            <a className="phone-banner__link" href="tel:+48696129310">
-              696 129 310
+            <a className="phone-banner__link" href={sitePhoneHref}>
+              {sitePhoneDisplay}
             </a>
           </div>
         </div>
       </ScrollReveal>
+
+      <FaqSection />
 
       <ScrollReveal
         as="section"
@@ -562,7 +655,7 @@ export default function HomePage() {
               Dojazd
             </h2>
             <span className="machine__rule" aria-hidden="true" />
-            <p className="map-section__description">Markowa 946</p>
+            <p className="map-section__description">{siteAddressFull}</p>
           </div>
 
           <div className="map-section__frame-wrapper">
@@ -637,9 +730,11 @@ export default function HomePage() {
           <div className="site-footer__brand">
             <p className="site-footer__eyebrow">Zakuwanie węży hydraulicznych</p>
             <h2 id="footer-title" className="site-footer__title">
-              ZAKUWANIE MARKOWA
+              <a href="#start" className="site-footer__logo-link" aria-label="Zakuwanie Markowa">
+                <ZakuwanieMarkowaLogo variant="light" className="site-footer__logo" />
+              </a>
             </h2>
-            <address className="site-footer__address">Markowa 946</address>
+            <address className="site-footer__address">{siteAddressFull}</address>
             <p className="site-footer__meta">NIP: 8652567984</p>
             <p className="site-footer__meta">GPS: 50.019980, 22.260904</p>
           </div>
@@ -651,27 +746,27 @@ export default function HomePage() {
             <dl className="site-footer__hours">
               <div className="site-footer__hours-row">
                 <dt>Poniedziałek</dt>
-                <dd>08:00-20:00</dd>
+                <dd>07:00-15:00</dd>
               </div>
               <div className="site-footer__hours-row">
                 <dt>Wtorek</dt>
-                <dd>08:00-20:00</dd>
+                <dd>07:00-15:00</dd>
               </div>
               <div className="site-footer__hours-row">
                 <dt>Środa</dt>
-                <dd>08:00-20:00</dd>
+                <dd>07:00-15:00</dd>
               </div>
               <div className="site-footer__hours-row">
                 <dt>Czwartek</dt>
-                <dd>08:00-20:00</dd>
+                <dd>07:00-15:00</dd>
               </div>
               <div className="site-footer__hours-row">
                 <dt>Piątek</dt>
-                <dd>08:00-20:00</dd>
+                <dd>07:00-15:00</dd>
               </div>
               <div className="site-footer__hours-row">
                 <dt>Sobota</dt>
-                <dd>08:00-20:00</dd>
+                <dd>07:00-15:00</dd>
               </div>
               <div className="site-footer__hours-row">
                 <dt>Niedziela</dt>
@@ -693,6 +788,9 @@ export default function HomePage() {
               </li>
               <li>
                 <a href="#galeria">Galeria</a>
+              </li>
+              <li>
+                <a href="#faq">FAQ</a>
               </li>
               <li>
                 <a href="#kontakt">Kontakt</a>

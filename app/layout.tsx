@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import Script from "next/script";
 import type { ReactNode } from "react";
-import "leaflet/dist/leaflet.css";
+import { faqItems } from "./data/siteContent";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -21,12 +21,14 @@ const localBusinessJsonLd = {
       "@id": `${siteUrl}/#local-business`,
       name: "Zakuwanie węży Markowa",
       url: siteUrl,
-      telephone: "+48696129310",
+      logo: `${siteUrl}/brand/zakuwanie-markowa-logo.svg`,
+      image: `${siteUrl}/brand/zakuwanie-markowa-logo.svg`,
+      telephone: "+48693293844",
       description:
         "Zakuwanie węży w Markowej koło Łańcuta na zakuwarce Uniflex HM 200 Ecoline.",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Markowa 946",
+        streetAddress: "Markowa 946 (Obok Zakładu Gospodarki Komunalnej)",
         addressLocality: "Markowa",
         addressRegion: "Podkarpackie",
         addressCountry: "PL",
@@ -41,8 +43,8 @@ const localBusinessJsonLd = {
         {
           "@type": "OpeningHoursSpecification",
           dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-          opens: "08:00",
-          closes: "20:00",
+          opens: "07:00",
+          closes: "15:00",
         },
       ],
       areaServed: ["Markowa", "Łańcut", "Podkarpackie"],
@@ -65,10 +67,23 @@ const localBusinessJsonLd = {
   ],
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Zakuwanie węży Markowa - Uniflex HM 200 Ecoline",
+    default: "Zakuwanie węży Markowa - Okolice Łańcuta",
     template: "%s | Zakuwanie węży Markowa",
   },
   description:
@@ -93,6 +108,41 @@ export const metadata: Metadata = {
     canonical: "/",
   },
 
+  icons: {
+    icon: [
+      {
+        url: "/brand/zakuwanie-markowa-icon-light.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/brand/zakuwanie-markowa-icon-dark.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    shortcut: [
+      {
+        url: "/brand/zakuwanie-markowa-icon-light.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/brand/zakuwanie-markowa-icon-dark.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    apple: [
+      {
+        url: "/brand/zakuwanie-markowa-icon-light.svg",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/brand/zakuwanie-markowa-icon-dark.svg",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+  },
+
   robots: {
     index: true,
     follow: true,
@@ -104,18 +154,24 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Zakuwanie węży Markowa - Uniflex HM 200 Ecoline",
+    title: "Zakuwanie węży Markowa - Okolice Łańcuta",
     description:
       "Zakuwanie węży w Markowej koło Łańcuta na zakuwarce Uniflex HM 200 Ecoline: siła 1300 kN / 130 t i zakres do 70 mm.",
     url: siteUrl,
     siteName: "Zakuwanie węży Markowa",
     locale: "pl_PL",
     type: "website",
+    images: [
+      {
+        url: "/brand/zakuwanie-markowa-logo.svg",
+        alt: "Logo Zakuwanie Markowa",
+      },
+    ],
   },
 
   twitter: {
     card: "summary",
-    title: "Zakuwanie węży Markowa - Uniflex HM 200 Ecoline",
+    title: "Zakuwanie węży Markowa - Okolice Łańcuta",
     description:
       "Zakuwanie węży w Markowej koło Łańcuta. Siła zaciskania 1300 kN / 130 t, zakres do 70 mm.",
   },
@@ -138,6 +194,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
           }}
         />
         {children}

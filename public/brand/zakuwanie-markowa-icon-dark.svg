@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 108 108" role="img" aria-label="Zakuwanie Markowa">
+  <g transform="translate(0 6) translate(50 50) scale(1.12) translate(-50 -50)">
+    <polygon
+      fill="none"
+      stroke="#ffffff"
+      stroke-width="8"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      points="50,4 96,28 96,72 50,96 4,72 4,28"
+    />
+    <path
+      fill="none"
+      stroke="#ffffff"
+      stroke-width="8"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      d="M 50,4 L 50,20 C 50,45 20,25 20,50 C 20,65 40,55 52,55 L 65,55 C 85,55 85,80 65,80 L 48,80"
+    />
+    <g fill="#ffffff">
+      <rect x="42" y="74" width="6" height="12" rx="1" />
+      <polygon points="42,71 35,71 31,75 31,85 35,89 42,89" />
+      <rect x="26" y="77" width="5" height="6" rx="1" />
+      <rect x="23" y="78.5" width="3" height="3" />
+    </g>
+  </g>
+</svg>

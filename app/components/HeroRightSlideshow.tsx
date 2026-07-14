@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import type { GalleryImage } from "../data/ecolinoXWodwormTraki";
 
 const SLIDE_INTERVAL_MS = 5500;
-const coverSlideshowImageIds = new Set(["traki-01", "dzwig-hydrauliczny-01"]);
 
 type HeroRightSlideshowProps = {
   images: GalleryImage[];
@@ -39,14 +38,13 @@ export default function HeroRightSlideshow({ images }: HeroRightSlideshowProps) 
     <div className="hero__slideshow">
       {images.map((image, index) => {
         const isActive = index === activeIndex;
-        const useCover = coverSlideshowImageIds.has(image.id);
 
         return (
           <picture
             key={image.id}
             className={`hero__slideshow-slide${
               isActive ? " hero__slideshow-slide--active" : ""
-            }${useCover ? " hero__slideshow-slide--cover" : ""}`}
+            }`}
           >
             <source media="(min-width: 48rem)" srcSet={image.desktopSrc} />
             <img

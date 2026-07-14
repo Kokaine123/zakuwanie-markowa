@@ -103,14 +103,14 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
           })}
         </div>
 
-          <div className="gallery-coverflow__controls">
+        <div className="gallery-coverflow__controls">
           <button
             className="gallery-coverflow__nav"
             type="button"
             aria-label="Poprzednie zdjęcie"
             onClick={goPrev}
           >
-            ←
+            <i className="fa-solid fa-chevron-left" aria-hidden="true" />
           </button>
           <button
             className="gallery-coverflow__nav"
@@ -118,7 +118,7 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
             aria-label="Następne zdjęcie"
             onClick={goNext}
           >
-            →
+            <i className="fa-solid fa-chevron-right" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
             aria-label="Poprzednie zdjęcie"
             onClick={(e) => { e.stopPropagation(); goPrev(); }}
           >
-            ←
+            <i className="fa-solid fa-chevron-left" aria-hidden="true" />
           </button>
 
           <figure
@@ -171,7 +171,7 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
             aria-label="Następne zdjęcie"
             onClick={(e) => { e.stopPropagation(); goNext(); }}
           >
-            →
+            <i className="fa-solid fa-chevron-right" aria-hidden="true" />
           </button>
         </div>
       )}

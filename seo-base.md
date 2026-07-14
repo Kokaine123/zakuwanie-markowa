@@ -1,6 +1,6 @@
 # Baza SEO
 
-Źródła: `Materialy_WWW_Zakuwarka_Wersja_Finalna.pdf`, potwierdzone dane z rozmowy.
+Źródła: `Materialy_WWW_Zakuwarka_Wersja_Finalna.pdf`, `wytyczne_strona_zakuwanie_wezy (2).pdf`, potwierdzone dane z rozmowy.
 
 Zakres: baza przygotowana wyłącznie na podstawie potwierdzonych danych. Brakujące informacje oznaczono jako `brak danych`.
 
@@ -39,7 +39,7 @@ Zakuwanie węży w Markowej koło Łańcuta na zakuwarce Uniflex HM 200 Ecoline.
 
 ## Propozycja H1
 
-Zakuwanie węży w Markowej na maszynie Uniflex HM 200 Ecoline
+Zakuwanie węży Hydraulicznych
 
 ## Propozycje H2
 
@@ -89,20 +89,20 @@ index, follow
 
 - Typ Schema.org: `LocalBusiness`.
 - Nazwa: Zakuwanie węży Markowa.
-- Adres: Markowa 946.
+- Adres: Markowa 946 (Obok Zakładu Gospodarki Komunalnej).
 - Miejscowość: Markowa.
 - Obszar lokalny: Łańcut, Podkarpackie.
 - Kraj: PL.
-- Telefon: +48 696 129 310.
+- Telefon: +48 693 293 844.
 - E-mail: brak danych.
 - NIP: 8652567984.
 - Godziny otwarcia:
-  - Poniedziałek: 08:00-20:00.
-  - Wtorek: 08:00-20:00.
-  - Środa: 08:00-20:00.
-  - Czwartek: 08:00-20:00.
-  - Piątek: 08:00-20:00.
-  - Sobota: 08:00-20:00.
+  - Poniedziałek: 07:00-15:00.
+  - Wtorek: 07:00-15:00.
+  - Środa: 07:00-15:00.
+  - Czwartek: 07:00-15:00.
+  - Piątek: 07:00-15:00.
+  - Sobota: 07:00-15:00.
   - Niedziela: Zamknięte.
 - Współrzędne geograficzne: 50.019980, 22.260904.
 - Profile social media: brak danych.
