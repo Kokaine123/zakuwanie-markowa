@@ -1577,7 +1577,7 @@ a {
 
 .site-footer__logo-link {
   display: block;
-  width: clamp(18rem, 44vw, 28rem);
+  width: clamp(11rem, 28vw, 15rem);
   max-width: 100%;
   margin: 0;
   padding: 0;
@@ -2259,25 +2259,44 @@ html.nav-items-visible .mobile-navigation__phone {
     box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.28);
   }
 
-  .hero__logo {
+  .hero__logo,
+  .hero__logo.brand-logo {
     display: block;
-    width: 100%;
-    max-width: clamp(13rem, 20vw, 18rem);
+    position: static;
+    width: min(100%, 22rem);
+    max-width: 22rem;
     height: auto;
     margin: 0 0 clamp(0.35rem, 0.8vw, 0.65rem);
+    transform: none;
   }
 
   .hero__content {
-    width: min(50vw, 70rem);
-    align-items: flex-start;
+    position: relative;
+    z-index: 3;
+    width: min(48vw, 60rem);
+    max-width: 48vw;
+    margin-inline: 0;
+    margin-left: clamp(1.5rem, 4.5vw, 3.5rem);
+    align-items: stretch;
     text-align: left;
-    padding-inline: clamp(2rem, 6vw, 6rem) clamp(1.5rem, 3vw, 3.5rem);
+    justify-content: center;
+    padding: clamp(4rem, 8vw, 5.5rem) clamp(1rem, 2.5vw, 2rem) clamp(3rem, 6vw, 4rem);
   }
 
   .hero__heading {
+    width: 100%;
     max-width: 100%;
-    font-size: clamp(3.25rem, 5.2vw, 6rem);
-    text-wrap: balance;
+    font-size: clamp(3.25rem, 5.8vw, 6.25rem);
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    text-wrap: normal;
+  }
+
+  .hero__location {
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(0.9rem, 1.15vw, 1.1rem);
+    letter-spacing: 0.12em;
   }
 
   .hero__actions {

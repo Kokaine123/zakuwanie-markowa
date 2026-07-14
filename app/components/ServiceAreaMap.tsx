@@ -39,9 +39,7 @@ const Circle = dynamic(
 const serviceAreaCenter: LatLngExpression = [50.01998, 22.260904];
 const serviceAreaRadius = 50000;
 const serviceAreaCities: Array<{ name: string; position: LatLngExpression }> = [
-  { name: "Łańcut", position: [50.0687, 22.2291] },
   { name: "Rzeszów", position: [50.0412, 21.9991] },
-  { name: "Przeworsk", position: [50.0591, 22.4937] },
   { name: "Leżajsk", position: [50.2626, 22.4192] },
   { name: "Jarosław", position: [50.0162, 22.6778] },
 ];
@@ -145,8 +143,8 @@ export default function ServiceAreaMap() {
             <Marker key={city.name} position={city.position} icon={mapIcons.city}>
               <Tooltip
                 permanent
-                direction="top"
-                offset={[0, -8]}
+                direction={city.name === "Rzeszów" ? "bottom" : "top"}
+                offset={city.name === "Rzeszów" ? [0, 8] : [0, -8]}
                 opacity={1}
                 className="service-area-map__city-label"
               >
