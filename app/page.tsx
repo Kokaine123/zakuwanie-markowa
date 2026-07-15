@@ -8,18 +8,16 @@ import HeroRightSlideshow from "./components/HeroRightSlideshow";
 import MachineSection from "./components/MachineSection";
 import BenefitsSection from "./components/BenefitsSection";
 import FaqSection from "./components/FaqSection";
+import MobileDrawerNav from "./components/MobileDrawerNav";
 import ZakuwanieMarkowaLogo from "./components/ZakuwanieMarkowaLogo";
-import { ecolinoXWodwormTraki } from "./data/ecolinoXWodwormTraki";
+import { useActiveSectionSpy } from "./hooks/useActiveSectionSpy";
+import { ecolinoXWodwormTraki, heroSlideshowImages } from "./data/ecolinoXWodwormTraki";
 import {
   heroContent,
   siteAddressFull,
   sitePhoneDisplay,
   sitePhoneHref,
 } from "./data/siteContent";
-
-const heroRightSlideshowImages = ecolinoXWodwormTraki.filter(
-  (image) => image.id !== "wezel-hydrauliczny-maszyna-01",
-);
 
 const navigationItems = [
   { label: "Start", href: "#start" },
@@ -61,8 +59,6 @@ const additionalOffers = [
   },
 ];
 
-const logoCenterHoldDuration = 380;
-const logoMoveDuration = 360;
 const sectionActivationPoint = 0.35;
 type NavigationToggleTone = "light" | "dark";
 
@@ -75,150 +71,17 @@ const whiteBackgroundNavigationHrefs = new Set([
 ]);
 
 export default function HomePage() {
-  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-  const [isTitleExpanded, setIsTitleExpanded] = useState(false);
-  const [isNavigationItemsVisible, setIsNavigationItemsVisible] = useState(false);
-  const [isNavigationClosing, setIsNavigationClosing] = useState(false);
-  const [activeNavigationHref, setActiveNavigationHref] = useState(navigationItems[0].href);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [activeNavigationHref, setActiveNavigationHref] = useActiveSectionSpy(
+    navigationItems,
+    sectionActivationPoint,
+  );
   const [navigationToggleTone, setNavigationToggleTone] =
     useState<NavigationToggleTone>("light");
   const [isDesktopNavigationHidden, setIsDesktopNavigationHidden] = useState(false);
   const navigationToggleRef = useRef<HTMLButtonElement | null>(null);
-  const navigationTimersRef = useRef<number[]>([]);
-
-  const clearNavigationTimers = () => {
-    navigationTimersRef.current.forEach((timerId) => {
-      window.clearTimeout(timerId);
-    });
-    navigationTimersRef.current = [];
-  };
-
-  const scheduleNavigationTimer = (callback: () => void, delay: number) => {
-    const timerId = window.setTimeout(callback, delay);
-    navigationTimersRef.current.push(timerId);
-  };
-
-  const openNavigation = () => {
-    clearNavigationTimers();
-    setIsNavigationClosing(false);
-    setIsNavigationItemsVisible(false);
-    setIsTitleExpanded(false);
-    setIsNavigationOpen(true);
-
-    scheduleNavigationTimer(() => {
-      setIsTitleExpanded(true);
-    }, logoCenterHoldDuration);
-
-    scheduleNavigationTimer(() => {
-      setIsNavigationItemsVisible(true);
-    }, logoCenterHoldDuration + logoMoveDuration);
-  };
-
-  const closeNavigation = () => {
-    clearNavigationTimers();
-    setIsNavigationItemsVisible(false);
-    setIsNavigationClosing(false);
-
-    scheduleNavigationTimer(() => {
-      setIsTitleExpanded(false);
-    }, 120);
-
-    scheduleNavigationTimer(() => {
-      setIsNavigationClosing(true);
-    }, 120 + logoMoveDuration);
-
-    scheduleNavigationTimer(() => {
-      setIsNavigationClosing(false);
-      setIsNavigationOpen(false);
-    }, 120 + logoMoveDuration * 2);
-  };
-
-  const toggleNavigation = () => {
-    if (isNavigationOpen) {
-      closeNavigation();
-      return;
-    }
-
-    openNavigation();
-  };
-
-  useEffect(() => clearNavigationTimers, []);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const { body } = document;
-
-    body.classList.toggle("nav-open", isNavigationOpen);
-    root.classList.toggle("nav-open", isNavigationOpen);
-    root.classList.toggle("nav-title-expanded", isTitleExpanded);
-    root.classList.toggle("nav-items-visible", isNavigationItemsVisible);
-    root.classList.toggle("nav-closing", isNavigationClosing);
-
-    const preventBackgroundScroll = (event: Event) => {
-      event.preventDefault();
-    };
-
-    if (isNavigationOpen) {
-      const scrollY = window.scrollY;
-      body.dataset.navScrollLock = String(scrollY);
-      body.style.position = "fixed";
-      body.style.top = `-${scrollY}px`;
-      body.style.left = "0";
-      body.style.right = "0";
-      body.style.width = "100%";
-
-      body.addEventListener("touchmove", preventBackgroundScroll, { passive: false });
-      body.addEventListener("wheel", preventBackgroundScroll, { passive: false });
-    } else {
-      const scrollY = Number(body.dataset.navScrollLock || "0");
-
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.width = "";
-      delete body.dataset.navScrollLock;
-
-      if (scrollY > 0) {
-        window.scrollTo(0, scrollY);
-      }
-    }
-
-    return () => {
-      body.removeEventListener("touchmove", preventBackgroundScroll);
-      body.removeEventListener("wheel", preventBackgroundScroll);
-
-      body.classList.remove("nav-open");
-      root.classList.remove(
-        "nav-open",
-        "nav-title-expanded",
-        "nav-items-visible",
-        "nav-closing",
-      );
-
-      const scrollY = Number(body.dataset.navScrollLock || "0");
-
-      if (body.style.position === "fixed") {
-        body.style.position = "";
-        body.style.top = "";
-        body.style.left = "";
-        body.style.right = "";
-        body.style.width = "";
-        delete body.dataset.navScrollLock;
-        window.scrollTo(0, scrollY);
-      }
-    };
-  }, [isNavigationOpen, isTitleExpanded, isNavigationItemsVisible, isNavigationClosing]);
-
-  useEffect(() => {
-    const sections = navigationItems
-      .map((item) => document.querySelector<HTMLElement>(item.href))
-      .filter((section): section is HTMLElement => section !== null);
-
-    if (sections.length === 0) {
-      return;
-    }
-
     let animationFrameId: number | null = null;
     let lastScrollY = window.scrollY;
 
@@ -278,23 +141,37 @@ export default function HomePage() {
       }
 
       const rect = element.getBoundingClientRect();
-      const elementsBelowElement = document.elementsFromPoint(
-        rect.left + rect.width / 2,
-        rect.top + rect.height / 2,
-      );
-      const pageElementBelowElement =
-        elementsBelowElement.find(
+      const sampleX = rect.left + rect.width / 2;
+      const sampleY = rect.top + rect.height / 2;
+      const previousVisibility = element.style.visibility;
+
+      element.style.visibility = "hidden";
+
+      const elementsBelowElement = document
+        .elementsFromPoint(sampleX, sampleY)
+        .filter(
           (candidate) =>
             !ignoredSelectors.some((selector) => candidate.closest(selector)),
-        ) ?? null;
+        );
 
-      return getBackgroundTone(pageElementBelowElement);
+      element.style.visibility = previousVisibility;
+
+      for (const candidate of elementsBelowElement) {
+        const tone = getBackgroundTone(candidate);
+
+        if (tone) {
+          return tone;
+        }
+      }
+
+      return null;
     };
 
     const getNavigationToggleTone = (currentHref: string): NavigationToggleTone => {
       const measuredTone = getToneBelowElement(navigationToggleRef.current, [
-        ".site-header",
-        ".mobile-navigation",
+        ".mobile-drawer-header",
+        ".mobile-drawer",
+        ".desktop-navigation-wrap",
       ]);
 
       if (measuredTone) {
@@ -304,50 +181,13 @@ export default function HomePage() {
       return whiteBackgroundNavigationHrefs.has(currentHref) ? "dark" : "light";
     };
 
-    const getCurrentSection = () => {
-      if (window.scrollY <= 8) {
-        return sections[0];
-      }
-
-      const controlPoint = window.innerHeight * sectionActivationPoint;
-      const sectionContainingControlPoint = sections.find((section) => {
-        const rect = section.getBoundingClientRect();
-
-        return rect.top <= controlPoint && rect.bottom > controlPoint;
-      });
-
-      if (sectionContainingControlPoint) {
-        return sectionContainingControlPoint;
-      }
-
-      let currentSection = sections[0];
-      let closestDistance = Number.POSITIVE_INFINITY;
-
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        const sectionDistance = Math.min(
-          Math.abs(rect.top - controlPoint),
-          Math.abs(rect.bottom - controlPoint),
-        );
-
-        if (sectionDistance < closestDistance) {
-          closestDistance = sectionDistance;
-          currentSection = section;
-        }
-      }
-
-      return currentSection;
-    };
-
-    const updateActiveSection = () => {
+    const updateOnScroll = () => {
       const currentScrollY = window.scrollY;
-      const currentSection = getCurrentSection();
-      const currentHref = `#${currentSection.id}`;
+      const nextTone = getNavigationToggleTone(activeNavigationHref);
 
-      setActiveNavigationHref((previousHref) =>
-        previousHref === currentHref ? previousHref : currentHref,
+      setNavigationToggleTone((previousTone) =>
+        previousTone === nextTone ? previousTone : nextTone,
       );
-      setNavigationToggleTone(getNavigationToggleTone(currentHref));
 
       if (currentScrollY <= 16) {
         setIsDesktopNavigationHidden(false);
@@ -361,27 +201,27 @@ export default function HomePage() {
       animationFrameId = null;
     };
 
-    const scheduleActiveSectionUpdate = () => {
+    const scheduleScrollUpdate = () => {
       if (animationFrameId !== null) {
         return;
       }
 
-      animationFrameId = window.requestAnimationFrame(updateActiveSection);
+      animationFrameId = window.requestAnimationFrame(updateOnScroll);
     };
 
-    updateActiveSection();
-    window.addEventListener("scroll", scheduleActiveSectionUpdate, { passive: true });
-    window.addEventListener("resize", scheduleActiveSectionUpdate);
+    updateOnScroll();
+    window.addEventListener("scroll", scheduleScrollUpdate, { passive: true });
+    window.addEventListener("resize", scheduleScrollUpdate);
 
     return () => {
       if (animationFrameId !== null) {
         window.cancelAnimationFrame(animationFrameId);
       }
 
-      window.removeEventListener("scroll", scheduleActiveSectionUpdate);
-      window.removeEventListener("resize", scheduleActiveSectionUpdate);
+      window.removeEventListener("scroll", scheduleScrollUpdate);
+      window.removeEventListener("resize", scheduleScrollUpdate);
     };
-  }, []);
+  }, [activeNavigationHref]);
 
   return (
     <>
@@ -412,80 +252,23 @@ export default function HomePage() {
       </div>
 
       <main>
-      <header
-        className="site-header"
-        data-toggle-tone={navigationToggleTone}
-        aria-label="Nagłówek strony"
-      >
-        <button
-          ref={navigationToggleRef}
-          className="navigation-toggle"
-          type="button"
-          aria-controls="mobile-navigation"
-          aria-expanded={isNavigationOpen}
-          aria-label={
-            isNavigationOpen ? "Zamknij menu nawigacyjne" : "Otwórz menu nawigacyjne"
-          }
-          onClick={toggleNavigation}
-        >
-          <span className="navigation-toggle__line" />
-          <span className="navigation-toggle__line" />
-          <span className="navigation-toggle__line" />
-        </button>
-      </header>
-
-      <nav
-        id="mobile-navigation"
-        className="mobile-navigation"
-        aria-hidden={!isNavigationOpen}
-        aria-label="Menu główne"
-      >
-        <div className="mobile-navigation__content">
-          <a
-            href="#start"
-            className="mobile-navigation__logo-link"
-            tabIndex={isNavigationOpen ? 0 : -1}
-            onClick={closeNavigation}
-          >
-            <ZakuwanieMarkowaLogo variant="light" className="mobile-navigation__logo" />
-          </a>
-          <ul className="mobile-navigation__list">
-            {navigationItems.map((item) => {
-              const isActive = item.href === activeNavigationHref;
-
-              return (
-                <li key={item.href}>
-                  <a
-                    className="mobile-navigation__link"
-                    href={item.href}
-                    aria-current={isActive ? "location" : undefined}
-                    tabIndex={isNavigationOpen && isNavigationItemsVisible ? 0 : -1}
-                    onClick={() => {
-                      setActiveNavigationHref(item.href);
-                      closeNavigation();
-                    }}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-        <a
-          className="mobile-navigation__phone"
-          href={sitePhoneHref}
-          tabIndex={isNavigationOpen && isNavigationItemsVisible ? 0 : -1}
-        >
-          {sitePhoneDisplay}
-        </a>
-      </nav>
+        <MobileDrawerNav
+          items={navigationItems}
+          activeHref={activeNavigationHref}
+          onActiveHrefChange={setActiveNavigationHref}
+          toggleTone={navigationToggleTone}
+          toggleButtonRef={navigationToggleRef}
+          phoneHref={sitePhoneHref}
+          phoneDisplay={sitePhoneDisplay}
+          isOpen={isMobileDrawerOpen}
+          onOpenChange={setIsMobileDrawerOpen}
+        />
 
       <section id="start" className="hero" aria-label="Sekcja główna">
         <div className="hero__media hero__media--left" aria-hidden="true">
           <picture>
             <source
-              media="(min-width: 48rem)"
+              media="(min-width: 64rem)"
               srcSet={heroContent.desktopImage}
             />
             <img
@@ -515,7 +298,7 @@ export default function HomePage() {
         </div>
 
         <div className="hero__media hero__media--right" aria-hidden="true">
-          <HeroRightSlideshow images={heroRightSlideshowImages} />
+          <HeroRightSlideshow images={heroSlideshowImages} />
         </div>
 
         <ScrollReveal className="hero__content">

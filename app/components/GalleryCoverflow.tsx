@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { GalleryImage } from "../data/ecolinoXWodwormTraki";
 
 type GalleryCoverflowProps = {
   images: GalleryImage[];
   showTabsAbove?: boolean;
 };
+
+const swipeDistanceThreshold = 48;
+const swipeDirectionRatio = 1.15;
+
+const visibleOffsetRange = 2;
 
 function getOffset(index: number, activeIndex: number, total: number) {
   let offset = index - activeIndex;
@@ -18,11 +23,50 @@ function getOffset(index: number, activeIndex: number, total: number) {
 export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCoverflowProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const suppressClickRef = useRef(false);
   const total = images.length;
 
   const goTo = (index: number) => setActiveIndex((index + total) % total);
-  const goPrev = () => goTo(activeIndex - 1);
-  const goNext = () => goTo(activeIndex + 1);
+  const goPrev = () => setActiveIndex((current) => (current - 1 + total) % total);
+  const goNext = () => setActiveIndex((current) => (current + 1) % total);
+
+  const handleTouchStart = (event: React.TouchEvent) => {
+    const touch = event.changedTouches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    suppressClickRef.current = false;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    const touchStart = touchStartRef.current;
+
+    if (!touchStart) {
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStart.x;
+    const deltaY = touch.clientY - touchStart.y;
+
+    touchStartRef.current = null;
+
+    if (Math.abs(deltaX) < swipeDistanceThreshold) {
+      return;
+    }
+
+    if (Math.abs(deltaX) < Math.abs(deltaY) * swipeDirectionRatio) {
+      return;
+    }
+
+    suppressClickRef.current = true;
+
+    if (deltaX < 0) {
+      goNext();
+      return;
+    }
+
+    goPrev();
+  };
 
   const openLightbox = () => setLightboxOpen(true);
   const closeLightbox = () => setLightboxOpen(false);
@@ -64,13 +108,21 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
           </nav>
         )}
 
-        <div className="gallery-coverflow__stage">
+        <div
+          className="gallery-coverflow__stage"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {images.map((image, index) => {
             const offset = getOffset(index, activeIndex, total);
+            const isVisible = Math.abs(offset) <= visibleOffsetRange;
+
             return (
               <figure
                 className="gallery-coverflow__card"
                 data-offset={offset}
+                data-visible={isVisible ? "true" : "false"}
+                aria-hidden={!isVisible}
                 key={image.id}
               >
                 <button
@@ -79,13 +131,18 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
                   aria-label={offset === 0 ? `Powiększ: ${image.alt}` : `Pokaż: ${image.alt}`}
                   aria-current={offset === 0 ? "true" : undefined}
                   onClick={() => {
+                    if (suppressClickRef.current) {
+                      suppressClickRef.current = false;
+                      return;
+                    }
+
                     if (offset === 0) {
                       openLightbox();
                     } else {
                       goTo(index);
                     }
                   }}
-                  tabIndex={Math.abs(offset) <= 2 ? 0 : -1}
+                  tabIndex={isVisible && Math.abs(offset) <= visibleOffsetRange ? 0 : -1}
                 >
                   <picture>
                     <source media="(min-width: 48rem)" srcSet={image.desktopSrc} />
@@ -130,6 +187,8 @@ export default function GalleryCoverflow({ images, showTabsAbove }: GalleryCover
           aria-modal="true"
           aria-label={activeImage.alt}
           onClick={closeLightbox}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <button
             className="gallery-lightbox__close"

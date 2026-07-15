@@ -25,7 +25,7 @@ export const machineUses = [
 ] as const;
 
 export const machineDetailImage = {
-  desktop: "/gallery/ecolinoXWodwormTraki/wezel-hydrauliczny-maszyna-01.webp",
-  mobile: "/gallery/ecolinoXWodwormTraki/wezel-hydrauliczny-maszyna-01-mobile.webp",
-  alt: "Węże hydrauliczne z zakutymi złączkami na maszynie",
+  desktop: "/gallery/weze-hydrauliczne/zakuwamy-weze-01.webp",
+  mobile: "/gallery/weze-hydrauliczne/zakuwamy-weze-01-mobile.webp",
+  alt: "Węże hydrauliczne z zakutymi złączkami na ramieniu koparki",
 } as const;

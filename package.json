@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "optimize:gallery": "node scripts/optimize-gallery-images.mjs",
+    "optimize:machine-uses": "node scripts/optimize-machine-uses-image.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

@@ -46,7 +46,7 @@ export default function HeroRightSlideshow({ images }: HeroRightSlideshowProps) 
               isActive ? " hero__slideshow-slide--active" : ""
             }`}
           >
-            <source media="(min-width: 48rem)" srcSet={image.desktopSrc} />
+            <source media="(min-width: 64rem)" srcSet={image.desktopSrc} />
             <img
               src={image.mobileSrc}
               alt=""

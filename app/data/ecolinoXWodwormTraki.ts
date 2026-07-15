@@ -6,56 +6,82 @@ export type GalleryImage = {
   mobileSrc: string;
 };
 
-const galleryBasePath = "/gallery/ecolinoXWodwormTraki";
+const wezeBasePath = "/gallery/weze-hydrauliczne";
+const woodwormBasePath = "/gallery/ecolinoXWodwormTraki";
 
 export const ecolinoXWodwormTraki: GalleryImage[] = [
   {
-    id: "ecolino-01",
+    id: "weze-hydrauliczne-01",
     label: "Złącza",
-    alt: "Złącza hydrauliczne i węże w serwisie zakuwania w Markowej",
-    desktopSrc: `${galleryBasePath}/ecolino-01.webp`,
-    mobileSrc: `${galleryBasePath}/ecolino-01-mobile.webp`,
+    alt: "Węże hydrauliczne z metalowymi złączami podłączone do bloku maszyny",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-01.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-01-mobile.webp`,
   },
   {
-    id: "ecolino-02",
-    label: "Sterowanie",
-    alt: "Sterowanie hydrauliczne maszyny Collino Ecolino",
-    desktopSrc: `${galleryBasePath}/ecolino-02.webp`,
-    mobileSrc: `${galleryBasePath}/ecolino-02-mobile.webp`,
+    id: "weze-hydrauliczne-02",
+    label: "Przewody",
+    alt: "Przewody hydrauliczne ze złączami i osłonami sprężynowymi",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-02.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-02-mobile.webp`,
+  },
+  {
+    id: "weze-hydrauliczne-03",
+    label: "Węże",
+    alt: "Węże hydrauliczne podłączone do żółtego rozdzielacza w maszynie budowlanej",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-03.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-03-mobile.webp`,
+  },
+  {
+    id: "weze-hydrauliczne-04",
+    label: "Rozdzielacz",
+    alt: "Rozdzielacz hydrauliczny z wężami wysokociśnieniowymi i końcówkami",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-04.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-04-mobile.webp`,
+  },
+  {
+    id: "weze-hydrauliczne-05",
+    label: "Szybkozłącza",
+    alt: "Węże hydrauliczne ze szybkozłączami na czerwonej ramie maszyny",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-05.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-05-mobile.webp`,
+  },
+  {
+    id: "weze-hydrauliczne-06",
+    label: "Układ",
+    alt: "Układ węży hydraulicznych przy sterowaniu maszyny przemysłowej",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-06.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-06-mobile.webp`,
+  },
+  {
+    id: "weze-hydrauliczne-07",
+    label: "Instalacja",
+    alt: "Instalacja węży hydraulicznych na rozdzielaczu w maszynie rolniczej",
+    desktopSrc: `${wezeBasePath}/weze-hydrauliczne-07.webp`,
+    mobileSrc: `${wezeBasePath}/weze-hydrauliczne-07-mobile.webp`,
   },
   {
     id: "woodworm-01",
     label: "Łuparka",
     alt: "Łuparka hydrauliczna Collino w ofercie WoodWorm Markowa",
-    desktopSrc: `${galleryBasePath}/woodworm-01.webp`,
-    mobileSrc: `${galleryBasePath}/woodworm-01-mobile.webp`,
+    desktopSrc: `${woodwormBasePath}/woodworm-01.webp`,
+    mobileSrc: `${woodwormBasePath}/woodworm-01-mobile.webp`,
   },
   {
     id: "traki-01",
-    label: "Trak taśmowy",
+    label: "Trak",
     alt: "Układ hydrauliczny traka taśmowego WoodWorm",
-    desktopSrc: `${galleryBasePath}/traki-01.webp`,
-    mobileSrc: `${galleryBasePath}/traki-01-mobile.webp`,
+    desktopSrc: `${woodwormBasePath}/traki-01.webp`,
+    mobileSrc: `${woodwormBasePath}/traki-01-mobile.webp`,
   },
   {
-    id: "przewody-hydrauliczne-silnik-01",
-    label: "Przewody",
-    alt: "Przewody hydrauliczne i złącza w układzie silnikowym — zakuwanie Markowa",
-    desktopSrc: `${galleryBasePath}/przewody-hydrauliczne-silnik-01.webp`,
-    mobileSrc: `${galleryBasePath}/przewody-hydrauliczne-silnik-01-mobile.webp`,
-  },
-  {
-    id: "wezel-hydrauliczny-maszyna-01",
-    label: "Węże",
-    alt: "Węże hydrauliczne maszyny leśnej z zakutymi złączkami",
-    desktopSrc: `${galleryBasePath}/wezel-hydrauliczny-maszyna-01.webp`,
-    mobileSrc: `${galleryBasePath}/wezel-hydrauliczny-maszyna-01-mobile.webp`,
-  },
-  {
-    id: "dzwig-hydrauliczny-01",
-    label: "Dźwig",
-    alt: "Dźwig hydrauliczny z instalacją węży na pojeździe ciężarowym",
-    desktopSrc: `${galleryBasePath}/dzwig-hydrauliczny-01.webp`,
-    mobileSrc: `${galleryBasePath}/dzwig-hydrauliczny-01-mobile.webp`,
+    id: "ecolino-02",
+    label: "Sterowanie",
+    alt: "Sterowanie hydrauliczne maszyny Collino Ecolino",
+    desktopSrc: `${woodwormBasePath}/ecolino-02.webp`,
+    mobileSrc: `${woodwormBasePath}/ecolino-02-mobile.webp`,
   },
 ];
+
+export const heroSlideshowImages = ecolinoXWodwormTraki.filter((image) =>
+  image.id.startsWith("weze-hydrauliczne-"),
+);
