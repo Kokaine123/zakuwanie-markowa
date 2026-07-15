@@ -1,12 +1,18 @@
+import Link from "next/link";
 import { benefitItems } from "../data/siteContent";
 
-type BenefitIconProps = {
-  name: (typeof benefitItems)[number]["icon"];
+type BenefitGlyphName =
+  | (typeof benefitItems)[number]["badgeIcon"]
+  | (typeof benefitItems)[number]["meta"][number]["icon"];
+
+type BenefitGlyphProps = {
+  name: BenefitGlyphName;
+  className?: string;
 };
 
-function BenefitIcon({ name }: BenefitIconProps) {
+function BenefitGlyph({ name, className }: BenefitGlyphProps) {
   const sharedProps = {
-    className: "benefits-section__icon-svg",
+    className,
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
@@ -52,6 +58,32 @@ function BenefitIcon({ name }: BenefitIconProps) {
           <circle cx="12" cy="10.75" r="2.25" />
         </svg>
       );
+    case "check":
+      return (
+        <svg {...sharedProps}>
+          <path d="M5.5 12.5 10 17l8.5-9" />
+        </svg>
+      );
+    case "gauge":
+      return (
+        <svg {...sharedProps}>
+          <path d="M12 4.5a7.5 7.5 0 1 1-5.3 12.8" />
+          <path d="M12 8v4.25l2.75 1.75" />
+        </svg>
+      );
+    case "phone":
+      return (
+        <svg {...sharedProps}>
+          <path d="M6.5 5.5h3l1.5 3.5-2 1.25a11 11 0 0 0 5.25 5.25l1.25-2 3.5 1.5v3a1.75 1.75 0 0 1-1.75 1.75C10.2 20.25 3.75 13.8 3.75 7.25A1.75 1.75 0 0 1 5.5 5.5z" />
+        </svg>
+      );
+    case "map":
+      return (
+        <svg {...sharedProps}>
+          <path d="M9 4.5 4.5 6v13.5L9 18l6 2.5L19.5 18V4.5L15 3z" />
+          <path d="M9 4.5V18M15 6.5V20" />
+        </svg>
+      );
     default:
       return null;
   }
@@ -78,10 +110,49 @@ export default function BenefitsSection() {
               }`}
             >
               <article className="benefits-section__card">
-                <span className="benefits-section__icon" aria-hidden="true">
-                  <BenefitIcon name={item.icon} />
+                <div className="benefits-section__card-media" aria-hidden="true">
+                  <picture>
+                    <source media="(min-width: 48rem)" srcSet={item.image.desktop} />
+                    <img
+                      src={item.image.mobile}
+                      alt=""
+                      className="benefits-section__card-image"
+                      style={{ objectPosition: item.image.focus }}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </picture>
+                </div>
+
+                <div className="benefits-section__card-overlay" aria-hidden="true" />
+
+                <span className="benefits-section__card-badge" aria-hidden="true">
+                  <BenefitGlyph
+                    name={item.badgeIcon}
+                    className="benefits-section__card-badge-icon"
+                  />
                 </span>
-                <p className="benefits-section__label">{item.title}</p>
+
+                <div className="benefits-section__card-content">
+                  <h3 className="benefits-section__card-title">{item.title}</h3>
+                  <p className="benefits-section__card-subtitle">{item.subtitle}</p>
+
+                  <ul className="benefits-section__card-meta">
+                    {item.meta.map((metaItem) => (
+                      <li key={`${item.id}-${metaItem.icon}-${metaItem.label}`}>
+                        <BenefitGlyph
+                          name={metaItem.icon}
+                          className="benefits-section__card-meta-icon"
+                        />
+                        <span>{metaItem.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link href={item.cta.href} className="benefits-section__card-cta">
+                    {item.cta.label}
+                  </Link>
+                </div>
               </article>
             </li>
           ))}

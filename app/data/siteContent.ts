@@ -10,35 +10,92 @@ const siteOpeningHours = "07:00-15:00";
 export const heroContent = {
   title: "Zakuwanie węży Hydraulicznych",
   location: "Ulica Markowa 946 / Okolice Łańcuta",
-  desktopImage: "/gallery/ecolinoXWodwormTraki/ecolino-01.webp",
-  mobileImage: "/gallery/ecolinoXWodwormTraki/ecolino-01-mobile.webp",
+  desktopImage: "/gallery/weze-hydrauliczne/weze-hydrauliczne-01.webp",
+  mobileImage: "/gallery/weze-hydrauliczne/weze-hydrauliczne-01-mobile.webp",
 };
+
+const wezeGalleryBase = "/gallery/weze-hydrauliczne";
 
 export const benefitItems = [
   {
     id: "on-site",
-    title: "Zakuwanie dostępne od ręki",
-    icon: "clock",
+    title: "Od ręki",
+    subtitle: "Zakuwanie na miejscu",
+    badgeIcon: "clock",
+    meta: [
+      { icon: "clock", label: "5–15 minut" },
+      { icon: "check", label: "Bez umawiania" },
+    ],
+    cta: { label: "Sprawdź ofertę", href: "#oferta" },
+    image: {
+      desktop: `${wezeGalleryBase}/weze-hydrauliczne-01.webp`,
+      mobile: `${wezeGalleryBase}/weze-hydrauliczne-01-mobile.webp`,
+      focus: "68% 42%",
+    },
   },
   {
     id: "hours",
-    title: `Godziny otwarcia: ${siteOpeningHours}`,
-    icon: "calendar",
+    title: "Godziny",
+    subtitle: siteOpeningHours,
+    badgeIcon: "calendar",
+    meta: [
+      { icon: "calendar", label: "Pon–Pt" },
+      { icon: "pin", label: "Markowa" },
+    ],
+    cta: { label: "Kontakt", href: "#kontakt" },
+    image: {
+      desktop: `${wezeGalleryBase}/weze-hydrauliczne-03.webp`,
+      mobile: `${wezeGalleryBase}/weze-hydrauliczne-03-mobile.webp`,
+      focus: "55% 40%",
+    },
   },
   {
     id: "range",
-    title: "Zakres zakucia do 70 mm",
-    icon: "ruler",
+    title: "Do 70 mm",
+    subtitle: "Zakres zakucia",
+    badgeIcon: "ruler",
+    meta: [
+      { icon: "ruler", label: "do 70 mm" },
+      { icon: "gauge", label: "Hydraulika" },
+    ],
+    cta: { label: "O maszynie", href: "#oferta" },
+    image: {
+      desktop: `${wezeGalleryBase}/weze-hydrauliczne-05.webp`,
+      mobile: `${wezeGalleryBase}/weze-hydrauliczne-05-mobile.webp`,
+      focus: "62% 40%",
+    },
   },
   {
     id: "emergency",
-    title: "Awaria → Zadzwoń poza godzinami",
-    icon: "alert",
+    title: "Awaria",
+    subtitle: "Zadzwoń poza godzinami",
+    badgeIcon: "alert",
+    meta: [
+      { icon: "alert", label: "Pilne zakuwanie" },
+      { icon: "phone", label: sitePhoneDisplay },
+    ],
+    cta: { label: "Zadzwoń teraz", href: sitePhoneHref },
+    image: {
+      desktop: `${wezeGalleryBase}/weze-hydrauliczne-06.webp`,
+      mobile: `${wezeGalleryBase}/weze-hydrauliczne-06-mobile.webp`,
+      focus: "72% 38%",
+    },
   },
   {
     id: "location",
-    title: `${siteAddressLine} (${siteAddressHint})`,
-    icon: "pin",
+    title: "Markowa",
+    subtitle: "Serwis na miejscu",
+    badgeIcon: "pin",
+    meta: [
+      { icon: "pin", label: siteAddressLine },
+      { icon: "map", label: "Okolice Łańcuta" },
+    ],
+    cta: { label: "Zobacz mapę", href: "#mapa" },
+    image: {
+      desktop: `${wezeGalleryBase}/weze-hydrauliczne-07.webp`,
+      mobile: `${wezeGalleryBase}/weze-hydrauliczne-07-mobile.webp`,
+      focus: "50% 36%",
+    },
   },
 ] as const;
 
